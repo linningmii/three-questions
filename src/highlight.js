@@ -1,5 +1,5 @@
 /**
- * {target: string | RegExp, class: string} | Array<{target: string | RegExp, class: string}>
+ * {target: string | RegExp, class: string, replacement: string} | Array<{target: string | RegExp, class: string, replacement: string}>
  * @param options
  * @return void
  */

@@ -28,7 +28,7 @@
 </pre>
 <script>
   /**
-   * {target: string | RegExp, class: string} | Array<{target: string | RegExp, class: string}>
+   * {target: string | RegExp, class: string, replacement: string} | Array<{target: string | RegExp, class: string, replacement: string}>
    * @param options
    * @return void
    */
@@ -53,7 +53,18 @@
         }
       }
 
-      const reg = target instanceof RegExp ? target : new RegExp(target, 'g')
+      let reg
+
+      if (target instanceof RegExp) {
+        reg = target
+
+        if (option.replacement === undefined) {
+          throw new Error(`${reg.toString()} is an regular expression, so you must set the replacement`)
+        }
+      } else {
+        new RegExp(target, 'g')
+      }
+
       // 将需要被高亮的内容用span标签包裹并添加对应样式
       result = result.replace(reg, `<span class="${option.class}">${option.replacement || target}</span>`)
     })
