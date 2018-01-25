@@ -1,22 +1,10 @@
 const uuid = require('uuid')
-const requestAnimationFrame = require('raf')
-
-class Queue extends Array {
-  constructor () {
-    super()
-  }
-
-  push () {
-  }
-}
-
-const queue = new Queue()
+const queue = require('./asynchronous-queue')
 
 // 用于缓存当前存在的定时器id, 可以通过clearInterval(timerId)停止定时器
 const timerCache = Object.create(null)
 
 function setIntervalPolyfill (fn, delay, ...args) {
-  let time = (new Date).getTime()
   if (typeof fn !== 'function') {
     throw new TypeError('Not a valid function')
   }
@@ -24,19 +12,16 @@ function setIntervalPolyfill (fn, delay, ...args) {
   const timerId = uuid.v4()
   timerCache[timerId] = true
 
-  function delayFn () {
-    let currentTime = (new Date).getTime()
-    if (currentTime - time >= delay) {
-      fn(...args)
-      time = (new Date).getTime()
+  function intervalDelayFn () {
+    if (!timerCache[timerId]) {
+      return
     }
 
-    if (timerCache[timerId]) {
-      requestAnimationFrame(delayFn)
-    }
+    fn(...args)
+    queue.push(intervalDelayFn, delay)
   }
 
-  requestAnimationFrame(delayFn)
+  queue.push(intervalDelayFn, delay)
   return timerId
 }
 
