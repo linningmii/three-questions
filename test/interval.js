@@ -39,7 +39,7 @@ describe('interval test case', function () {
       arr.push(0)
     }, 300)
 
-    await sleepPolyfill(1000)
+    await sleepPolyfill(900)
     expect(arr).toEqual([0, 0, 0])
   })
 
